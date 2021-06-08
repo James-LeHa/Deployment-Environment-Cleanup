@@ -61,8 +61,8 @@ if (fs.existsSync(path)) {
 
   //----> Values that the GitHub Action will receive <----//
   var _PAT = core.getInput('GITHUB_TOKEN');
-  var _TargetRepoSlug = core.getInput('TargetRepoSlug');
-  var _Ref = core.getInput('Ref');
+  var _TargetRepoSlug = core.getInput('repository');
+  var _Ref = core.getInput('ref');
   //----> Values that the GitHub Action will receive <----//
   console.log(
     '\x1b[32m%s\x1b[0m',
@@ -123,7 +123,7 @@ async function _getDeployments() {
 
     let environments = issue.data.map(a => a.environment);
 
-    return environments
+    return environments.toString()
 }
 
 
