@@ -1,0 +1,19 @@
+name: 'Get Deployment Environments from PR'
+description: 'Extract environment names from a PR Ref into a string list output'
+inputs:
+  GITHUB_TOKEN:
+    required: true
+    description: The token provided by GitHub actions via secrets.GITHUB_TOKEN
+  TargetRepoSlug:
+    required: true
+    description: Target Repository URL slug (<orgname>/<reponame>)
+  Ref:
+    required: true
+    description: PR Ref to check for deployment environments
+outputs:
+  environmentNameList:
+    description: List of environment names in string format
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

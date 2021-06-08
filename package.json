@@ -1,0 +1,36 @@
+{
+  "name": "issue-copy",
+  "version": "1.0.0",
+  "description": "Copy issues from one repo to another",
+  "main": "index.js",
+  "scripts": {
+    "start": "node copy-issues.js",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/githubcustomers/ghas-pov-automation.git"
+  },
+  "keywords": [
+    "ghas"
+  ],
+  "author": "bryancross",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/githubcustomers/ghas-pov-automation/issues"
+  },
+  "homepage": "https://github.com/githubcustomers/ghas-pov-automation#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.7",
+    "@actions/github": "^4.0.0",
+    "@octokit/graphql": "^4.5.6",
+    "@octokit/rest": "^18.0.6",
+    "csvtojson": "^2.0.10",
+    "dashdash": "^2.0.0",
+    "dotenv": "^9.0.2",
+    "fs": "0.0.1-security",
+    "jsonpath": "^1.1.1",
+    "jsonschema": "^1.4.0",
+    "prettier": "2.3.0"
+  }
+}

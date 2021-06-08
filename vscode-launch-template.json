@@ -1,0 +1,19 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Copy Issues",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "args":["<SOURCE-REPO-ORG>/<SOURCE-REPO-NAME>", "<SOURCE-REPO-ORG>/<SOURCE-REPO-NAME>", "[\"GHAS POV\"]","true","<YOUR-PAT>"]
+            "program": "${workspaceFolder}/copy-issues.js"
+        }
+    ]
+}
