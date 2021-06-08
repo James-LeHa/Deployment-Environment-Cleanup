@@ -2,7 +2,7 @@ module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 733:
+/***/ 688:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -69,8 +69,8 @@ if (fs.existsSync(path)) {
 
   //----> Values that the GitHub Action will receive <----//
   var _PAT = core.getInput('GITHUB_TOKEN');
-  var _TargetRepoSlug = core.getInput('TargetRepoSlug');
-  var _Ref = core.getInput('Ref');
+  var _TargetRepoSlug = core.getInput('repository');
+  var _Ref = core.getInput('ref');
   //----> Values that the GitHub Action will receive <----//
   console.log(
     '\x1b[32m%s\x1b[0m',
@@ -131,7 +131,7 @@ async function _getDeployments() {
 
     let environments = issue.data.map(a => a.environment);
 
-    return environments
+    return environments.toString()
 }
 
 
@@ -6201,6 +6201,6 @@ module.exports = require("zlib");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(733);
+/******/ 	return __webpack_require__(688);
 /******/ })()
 ;
