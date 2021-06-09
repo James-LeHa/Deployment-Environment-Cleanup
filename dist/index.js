@@ -70,7 +70,7 @@ if (fs.existsSync(path)) {
   console.log(' ');
 
   //----> Values that the GitHub Action will receive <----//
-  var _PAT = core.getInput('GITHUB_TOKEN');
+  var _PAT = core.getInput('token');
   var _TargetRepoSlug = core.getInput('repository');
   var _Ref = core.getInput('ref');
   var _DeleteEnvironments = core.getInput('delete_environments');
