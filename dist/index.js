@@ -116,7 +116,6 @@ async function init(TargetRepoSlug, PAT, Ref, DeleteEnvironments) {
     console.log(`\n`);
     console.log('\x1b[33m%s\x1b[0m', `DeleteEnvironments set to false. `);
     console.log('\x1b[33m%s\x1b[0m', `   Exiting... `);
-    s;
     process.exit(0);
   }
 }

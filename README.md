@@ -16,7 +16,7 @@ Note that if you are planning on deleting a created environment, your `GITHUB_TO
 ## Usage
 
 ### Lists Deployments and Deletes Environments from PR Ref
-The example below will be triggered on a PR closed event.
+The example below will be triggered on a *PR closed* event.
 
 - ✔️ Lists deployments
 - ✔️ Delete deployment environment(s)
