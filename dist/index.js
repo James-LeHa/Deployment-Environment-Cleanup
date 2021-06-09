@@ -2,7 +2,7 @@ module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 7688:
+/***/ 5283:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13,7 +13,7 @@ var _PAT;
 var _TargetOwner;
 var _TargetRepo;
 var _Ref;
-
+var _DeleteEnvironments;
 
 const core = __webpack_require__(5127);
 
@@ -27,7 +27,6 @@ __webpack_require__(403).config();
 
 //path of local env file, when testing and developing
 const path = './.env';
-
 
 if (fs.existsSync(path)) {
   console.log(
@@ -52,6 +51,7 @@ if (fs.existsSync(path)) {
   var _PAT = process.env.PAT;
   var _TargetRepoSlug = process.env.TargetRepoSlug;
   var _Ref = process.env.Ref;
+  var _DeleteEnvironments = process.env.DeleteEnvironments;
   //----> Values for local testing with .env file <----//
 } else {
   console.log(
@@ -73,6 +73,8 @@ if (fs.existsSync(path)) {
   var _PAT = core.getInput('GITHUB_TOKEN');
   var _TargetRepoSlug = core.getInput('repository');
   var _Ref = core.getInput('ref');
+  var _DeleteEnvironments = core.getInput('delete_environments');
+
   //----> Values that the GitHub Action will receive <----//
   console.log(
     '\x1b[32m%s\x1b[0m',
@@ -83,98 +85,148 @@ if (fs.existsSync(path)) {
   console.log('\x1b[32m%s\x1b[0m', `   Ref: ${_Ref}`);
 }
 
-
-
 const ghClient = github.getOctokit(_PAT);
 
 const octokit = new Octokit({
   auth: _PAT,
 });
 
-init(_TargetRepoSlug, _PAT, _Ref);
+init(_TargetRepoSlug, _PAT, _Ref, _DeleteEnvironments);
 
-async function init(TargetRepoSlug, PAT, Ref) {
+async function init(TargetRepoSlug, PAT, Ref, DeleteEnvironments) {
   _TargetRepoSlug = TargetRepoSlug;
   _PAT = PAT;
   _TargetOwner = _TargetRepoSlug.split('/')[0];
   _TargetRepo = _TargetRepoSlug.split('/')[1];
   _Ref = Ref;
+  _DeleteEnvironments = DeleteEnvironments === 'true';
 
   var deploymentEnvironments = await _getDeployments();
 
-  console.log('\x1b[36m%s\x1b[0m', `      Deployment Environments: ${deploymentEnvironments}`);
+  console.log(
+    '\x1b[36m%s\x1b[0m',
+    `      Deployment Environments: ${deploymentEnvironments}`
+  );
 
-  core.setOutput("environmentNameList", deploymentEnvironments)
+  core.setOutput('environmentNameList', deploymentEnvironments);
 
-  await _deleteEnvironments(deploymentEnvironments)
-
+  if (_DeleteEnvironments == true) {
+    await _deleteEnvironments(deploymentEnvironments);
+  } else {
+    console.log(`\n`);
+    console.log('\x1b[33m%s\x1b[0m', `DeleteEnvironments set to false. `);
+    console.log('\x1b[33m%s\x1b[0m', `   Exiting... `);
+    s;
+    process.exit(0);
+  }
 }
 
 async function _getDeployments() {
-    console.log(`\n`);
-    console.log('\x1b[33m%s\x1b[0m', `DELETE ENVIRONMENT INITIATED`);
-    
-    var deployments
+  console.log(`\n`);
+  console.log('\x1b[33m%s\x1b[0m', `GET DEPLOYMENTS INITIATED`);
 
-    try {
-      deployments = await ghClient.repos.listDeployments({
-        owner: _TargetOwner,
-        repo: _TargetRepo,
-        ref: _Ref
-      });
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        `|<---------------------------> ERROR CREATING ISSUE <---------------------------------->|`
-      );
-      console.log('\x1b[31m%s\x1b[0m', `   |---> ERROR: ${error}`);
+  var deployments;
 
-    }
+  try {
+    deployments = await ghClient.repos.listDeployments({
+      owner: _TargetOwner,
+      repo: _TargetRepo,
+      ref: _Ref,
+    });
+  } catch (error) {
+    console.log(
+      '\x1b[31m%s\x1b[0m',
+      `|<---------------------------> ERROR LISTING DEPLOYMENTS <---------------------------------->|`
+    );
+    console.log('\x1b[31m%s\x1b[0m', `   |---> ERROR: ${error}`);
+  }
 
-    console.log('\x1b[36m%s\x1b[0m', `Get Deployment Successful for ref: ${_Ref}`);
-    console.log('\x1b[36m%s\x1b[0m', `   Environments: ${deployments.data.length}`);
+  if(deployments.data.length <= 0)
+  {
+    console.log(
+      '\x1b[31m%s\x1b[0m',
+      `|<---------------------------> ERROR LISTING DEPLOYMENTS <---------------------------------->|`
+    );
+    console.log('\x1b[31m%s\x1b[0m', `   |---> No deployments found for ref: ${_Ref} `);
+    process.exit(1)
+  }
 
-    let environments = deployments.data.map(a => a.environment);
+  console.log(
+    '\x1b[36m%s\x1b[0m',
+    `Get Deployment Successful for ref: ${_Ref}`
+  );
+  console.log(
+    '\x1b[36m%s\x1b[0m',
+    `   Environments: ${deployments.data.length}`
+  );
 
-    // Filter out to unique values only
-    const uniqueEnvironments = [ ...new Set(environments)]  
+  let environments = deployments.data.map((a) => a.environment);
 
-    return uniqueEnvironments.toString()
+  // Filter out to unique values only
+  const uniqueEnvironments = [...new Set(environments)];
+
+  return uniqueEnvironments.toString();
 }
 
 async function _deleteEnvironments(deploymentEnvironments) {
-    console.log(`\n`);  
-    console.log('\x1b[33m%s\x1b[0m', `DELETE ENVIRONMENT INITIATED`);
+  console.log(`\n`);
+  console.log('\x1b[33m%s\x1b[0m', `DELETE ENVIRONMENT INITIATED`);
 
-    var environmentsArray = deploymentEnvironments.split(',')
-    
-    var i;
+  var environmentsArray = deploymentEnvironments.split(',');
 
-    for(i=0;i<environmentsArray.length;i++)
-    {
+  var i;
+
+  for (i = 0; i < environmentsArray.length; i++) {
+    let validEnvironment = false;
+
+    try {
+      await octokit.rest.repos.getEnvironment({
+        owner: _TargetOwner,
+        repo: _TargetRepo,
+        environment_name: environmentsArray[i],
+      });
+      console.log(
+        '\x1b[36m%s\x1b[0m',
+        `Valid Environment Found: ${environmentsArray[i]}`
+      );
+
+      validEnvironment = true;
+    } catch (error) {
+      console.log(
+        '\x1b[31m%s\x1b[0m',
+        `|<---------------------------> ERROR VALIDATING ENVIRONMENT ISSUE <---------------------------------->|`
+      );
+      console.log('\x1b[31m%s\x1b[0m', `   |---> Environment: ${environmentsArray[i]}`);
+
+      console.log('\x1b[31m%s\x1b[0m', `   |---> ERROR: ${error}`);
+    }
+
+    if (validEnvironment == true) {
       try {
         await octokit.rest.repos.deleteAnEnvironment({
           owner: _TargetOwner,
           repo: _TargetRepo,
-          environment_name: environmentsArray[i]
+          environment_name: environmentsArray[i],
         });
-        console.log('\x1b[36m%s\x1b[0m', `DELETE Environment Successful for ref: ${_Ref}`);
+        console.log(
+          '\x1b[36m%s\x1b[0m',
+          `DELETE Environment Successful for ref: ${_Ref}`
+        );
 
-        console.log('\x1b[36m%s\x1b[0m', `   Environment Deleted: ${environmentsArray[i]}`);
-      } 
-      catch (error) {
+        console.log(
+          '\x1b[36m%s\x1b[0m',
+          `   Environment Deleted: ${environmentsArray[i]}`
+        );
+      } catch (error) {
         console.log(
           '\x1b[31m%s\x1b[0m',
           `|<---------------------------> ERROR CREATING ISSUE <---------------------------------->|`
         );
         console.log('\x1b[31m%s\x1b[0m', `   |---> ERROR: ${error.stack}`);
-
       }
     }
-
+  }
 }
-
-
 
 
 /***/ }),
@@ -8490,6 +8542,6 @@ module.exports = require("zlib");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(7688);
+/******/ 	return __webpack_require__(5283);
 /******/ })()
 ;

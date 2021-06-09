@@ -1,7 +1,7 @@
 name: 'Get Deployment Environments from PR'
 description: 'Extract environment names from a PR Ref into a string list output'
 inputs:
-  GITHUB_TOKEN:
+  token:
     required: true
     description: The token provided by GitHub actions via secrets.GITHUB_TOKEN
   repository:
@@ -10,6 +10,9 @@ inputs:
   ref:
     required: true
     description: PR Ref to check for deployment environments
+  delete_environments:
+    required: true
+    description: Whether or not to delete environments for any deployments discovered
 outputs:
   environmentNameList:
     description: List of environment names in string format

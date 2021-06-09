@@ -4,7 +4,7 @@
   "description": "Copy issues from one repo to another",
   "main": "index.js",
   "scripts": {
-    "start": "node getDeployments.js",
+    "start": "node main.js",
     "test": "mocha"
   },
   "repository": {
