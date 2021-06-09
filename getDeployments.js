@@ -11,6 +11,8 @@ const core = require('@actions/core');
 
 const github = require('@actions/github');
 
+const { Octokit } = require("@octokit/rest");
+
 const fs = require('fs');
 
 require('dotenv').config();
@@ -75,8 +77,11 @@ if (fs.existsSync(path)) {
 
 
 
-//await _getDeployments()
 const ghClient = github.getOctokit(_PAT);
+
+const octokit = new Octokit({
+  auth: _PAT,
+});
 
 init(_TargetRepoSlug, _PAT, _Ref);
 
@@ -93,16 +98,18 @@ async function init(TargetRepoSlug, PAT, Ref) {
 
   core.setOutput("environmentNameList", deploymentEnvironments)
 
+  await _deleteEnvironments(deploymentEnvironments)
+
 }
 
 async function _getDeployments() {
-  //console.log('\x1b[36m%s\x1b[0m', `|-----------------TOTAL # OF ISSUES TO CREATE: ${issues.length}-----------------|`)
-  console.log(`\n`);
+    console.log(`\n`);
+    console.log('\x1b[33m%s\x1b[0m', `DELETE ENVIRONMENT INITIATED`);
     
-    var issue
+    var deployments
 
     try {
-      issue = await ghClient.repos.listDeployments({
+      deployments = await ghClient.repos.listDeployments({
         owner: _TargetOwner,
         repo: _TargetRepo,
         ref: _Ref
@@ -116,15 +123,47 @@ async function _getDeployments() {
 
     }
 
-    console.log('\x1b[36m%s\x1b[0m', `   Get Deployment Successful for ref: ${_Ref}`);
-    console.log('\x1b[36m%s\x1b[0m', `      Environments: ${issue.data.length}`);
-    // console.log('\x1b[36m%s\x1b[0m', `      Title: ${issue.data}`);
-    // console.log('\x1b[36m%s\x1b[0m', `      Body: ${issue.data}`);
+    console.log('\x1b[36m%s\x1b[0m', `Get Deployment Successful for ref: ${_Ref}`);
+    console.log('\x1b[36m%s\x1b[0m', `   Environments: ${deployments.data.length}`);
 
-    let environments = issue.data.map(a => a.environment);
+    let environments = deployments.data.map(a => a.environment);
 
-    return environments.toString()
+    // Filter out to unique values only
+    const uniqueEnvironments = [ ...new Set(environments)]  
+
+    return uniqueEnvironments.toString()
 }
 
+async function _deleteEnvironments(deploymentEnvironments) {
+    console.log(`\n`);  
+    console.log('\x1b[33m%s\x1b[0m', `DELETE ENVIRONMENT INITIATED`);
+
+    var environmentsArray = deploymentEnvironments.split(',')
+    
+    var i;
+
+    for(i=0;i<environmentsArray.length;i++)
+    {
+      try {
+        await octokit.rest.repos.deleteAnEnvironment({
+          owner: _TargetOwner,
+          repo: _TargetRepo,
+          environment_name: environmentsArray[i]
+        });
+        console.log('\x1b[36m%s\x1b[0m', `DELETE Environment Successful for ref: ${_Ref}`);
+
+        console.log('\x1b[36m%s\x1b[0m', `   Environment Deleted: ${environmentsArray[i]}`);
+      } 
+      catch (error) {
+        console.log(
+          '\x1b[31m%s\x1b[0m',
+          `|<---------------------------> ERROR CREATING ISSUE <---------------------------------->|`
+        );
+        console.log('\x1b[31m%s\x1b[0m', `   |---> ERROR: ${error.stack}`);
+
+      }
+    }
+
+}
 
 
