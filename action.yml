@@ -16,7 +16,8 @@ inputs:
 outputs:
   environmentNameList:
     description: List of environment names in string format
-
+  deploymentsFound:
+    description: bool value to indicate whether or not deployments were found for the ref
 runs:
   using: 'node12'
   main: 'dist/index.js'

@@ -139,7 +139,12 @@ async function _getDeployments() {
       `|<---------------------------> ERROR LISTING DEPLOYMENTS <---------------------------------->|`
     );
     console.log('\x1b[31m%s\x1b[0m', `   |---> No deployments found for ref: ${_Ref} `);
-    process.exit(1)
+    console.log('\x1b[31m%s\x1b[0m', `   |---> No deployments found for ref: ${_Ref} `);
+
+    core.setOutput('deploymentsFound', false);
+    process.exit(0)
+
+
   }
 
   console.log(
@@ -150,6 +155,8 @@ async function _getDeployments() {
     '\x1b[36m%s\x1b[0m',
     `   Environments: ${deployments.data.length}`
   );
+
+  core.setOutput('deploymentsFound', true);
 
   let environments = deployments.data.map((a) => a.environment);
 

@@ -13,6 +13,12 @@ Note that if you are planning on deleting a created environment, your `GITHUB_TO
 | `ref`                       |  The ref that will filter deployments by                                                | **required** |
 | `delete_environments`       | Delete environments of the discovered deployments. Default `false`    | **optional**|
 
+## Outputs
+
+| name                        | description                                                                             |           |  
+| --------------------------- | --------------------------------------------------------------------------------------- |  ---- |
+| `environmentNameList`       | GitHub token like `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`                | **required** |
+
 ## Usage
 
 ### Lists Deployments and Deletes Environments from PR Ref
@@ -35,10 +41,36 @@ jobs:
     steps:
     - name: Get and Delete Deployment Environments from PR
       id: environment_list
-      uses: James-LeHa/EnvironmentName-Extractor@1.4
+      uses: James-LeHa/EnvironmentName-Extractor@1.X
       with:
         ref: ${{ github.event.pull_request.head.ref }}
         repository: ${{ github.repository }}
         delete_environments: true
         token: ${{secrets.DEPLOYMENTS_MANAGEMENT}}
+```
+
+## Licensing Notice
+
+```
+MIT License
+
+Copyright (c) 2021 James Le Ha
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
