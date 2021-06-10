@@ -15,9 +15,10 @@ Note that if you are planning on deleting a created environment, your `GITHUB_TO
 
 ## Outputs
 
-| name                        | description                                                                             |           |  
+| name                        | description                                                                             |  Example       |  
 | --------------------------- | --------------------------------------------------------------------------------------- |  ---- |
-| `environmentNameList`       | GitHub token like `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`                | **required** |
+| `environmentNameList`       | String list of *unique* environments from deployments         | `'environmentName1,environmentName2'` |
+| `deploymentsFound`          | Boolean value whether or not any deployments were found for the ref                | `true` or `false` |
 
 ## Usage
 
