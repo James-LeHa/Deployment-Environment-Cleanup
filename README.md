@@ -1,4 +1,6 @@
 # Deployment and Environment Management
+
+[![Git](https://app.soluble.cloud/api/v1/public/badges/2304557a-9935-48c9-a642-4bd54b143a6d.svg?orgId=650162616495)](https://app.soluble.cloud/repos/details/github.com/james-leha/deployment-environment-cleanup?orgId=650162616495)  
 This GitHub Action allows users to extract deployments related to a specified `ref` and delete environments for those deployments.
 
 
